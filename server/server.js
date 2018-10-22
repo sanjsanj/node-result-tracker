@@ -68,10 +68,32 @@ app.post("/result", authenticate, (req, res) => {
 });
 
 app.get("/results", authenticate, (req, res) => {
-  Result
-    .find()
+  Result.find()
     .then(results => res.send({ results }))
     .catch(e => res.status(400).send(e));
+});
+
+app.post("/result/confirm/:id", authenticate, (req, res) => {
+  const id = req.params.id;
+
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  Result.findOne({
+    _id: id
+  })
+    .then(result => {
+      const confirmedBySubmitter =
+        result._creator.toString() === req.user._id.toString();
+
+      if (!result || confirmedBySubmitter) {
+        return res.status(404).send();
+      }
+
+      res.status(200).send(result);
+    })
+    .catch(e => res.status(404).send(e));
 });
 
 app.listen(port, () => {
