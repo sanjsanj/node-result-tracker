@@ -1,0 +1,37 @@
+{
+  "name": "result-tracker",
+  "version": "1.0.0",
+  "description": "A result tracker",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon server/server.js",
+    "start": "node server/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sanjsanj/node-result-tracker.git"
+  },
+  "keywords": [
+    "node"
+  ],
+  "author": "Sanjay Purswani <sanjsanj@hotmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sanjsanj/node-result-tracker/issues"
+  },
+  "homepage": "https://github.com/sanjsanj/node-result-tracker#readme",
+  "devDependencies": {
+    "nodemon": "^1.18.4"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "jsonwebtoken": "^8.3.0",
+    "lodash": "^4.17.11",
+    "mongodb": "^3.1.8",
+    "mongoose": "^5.3.5",
+    "validator": "^10.8.0"
+  }
+}
