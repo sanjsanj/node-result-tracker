@@ -1,13 +1,13 @@
 require("./config/config");
+require("./db/mongoose");
 
 const _ = require("lodash");
 const express = require("express");
 const bodyParser = require("body-parser");
 const { ObjectID } = require("mongodb");
 
-require("./db/mongoose");
-
 const { User } = require("./models/user");
+const { Result } = require("./models/result");
 const { authenticate } = require("./middleware/authenticate");
 
 const app = express();
@@ -53,6 +53,25 @@ app.delete("/users/me/token", authenticate, async (req, res) => {
   } catch (e) {
     res.status(400).send();
   }
+});
+
+app.post("/result", authenticate, (req, res) => {
+  const result = new Result({
+    _creator: req.user._id,
+    winner: req.body.winner
+  });
+
+  result
+    .save()
+    .then(() => res.send(result))
+    .catch(e => res.status(400).send(e));
+});
+
+app.get("/results", authenticate, (req, res) => {
+  Result
+    .find()
+    .then(results => res.send({ results }))
+    .catch(e => res.status(400).send(e));
 });
 
 app.listen(port, () => {
