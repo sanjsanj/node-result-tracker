@@ -73,7 +73,7 @@ app.get("/results", authenticate, (req, res) => {
     .catch(e => res.status(400).send(e));
 });
 
-app.post("/result/confirm/:id", authenticate, (req, res) => {
+app.patch("/result/confirm/:id", authenticate, (req, res) => {
   const id = req.params.id;
 
   if (!ObjectID.isValid(id)) {
@@ -91,7 +91,10 @@ app.post("/result/confirm/:id", authenticate, (req, res) => {
         return res.status(404).send();
       }
 
-      res.status(200).send(result);
+      result.confirmed = !result.confirmed;
+      result.save()
+        .then(() => res.send(result))
+        .catch(e => res.status(400).send(e));
     })
     .catch(e => res.status(404).send(e));
 });
