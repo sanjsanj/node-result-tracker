@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Result Tracker</title>
+</head>
+
+<body>
+  <h1>Result Tracker</h1>
+
+  <form id="signup-form" style="display:none;">
+    <label name="email">email</label>
+    <input name="email" type="text" id="form-email" />
+
+    <label name="password">password</label>
+    <input name="password" type="password" id="form-password" />
+
+    <input type="submit">
+  </form>
+
+  <script>
+    const authTokenName = "NodeResultTracker:x-auth";
+
+    function hasAuthToken() {
+      return localStorage.getItem(authTokenName)
+        ? true
+        : false;
+    }
+
+    if (!hasAuthToken()) {
+      document.getElementById("signup-form").style.display = "block";
+    }
+
+    document.getElementById("signup-form")
+      .addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const email = document.getElementById("form-email").value;
+        const password = document.getElementById("form-password").value;
+        console.log(email, password);
+
+        fetch("http://localhost:3000/users/", {
+          method: "post",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            email,
+            password
+          })
+        })
+          .then(resp => {
+            if (resp.headers.get("x-auth"))
+              localStorage.setItem(authTokenName, resp.headers.get("x-auth"));
+
+            return resp.json();
+          })
+          .then(json => {
+            console.log(json);
+          })
+          .catch(e => console.log(e));
+      })
+  </script>
+</body>
+
+</html>
