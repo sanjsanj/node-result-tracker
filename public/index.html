@@ -12,16 +12,29 @@
   <h1>Result Tracker</h1>
 
   <form id="signup-form" style="display:none;">
+    <h2>Sign up</h2>
     <label name="email">email</label>
-    <input name="email" type="text" id="form-email" />
+    <input name="email" type="text" id="signup-email" />
 
     <label name="password">password</label>
-    <input name="password" type="password" id="form-password" />
+    <input name="password" type="password" id="signup-password" />
+
+    <input type="submit">
+  </form>
+
+  <form id="login-form" style="display:none;">
+    <h2>Log in</h2>
+    <label name="email">email</label>
+    <input name="email" type="text" id="login-email" />
+
+    <label name="password">password</label>
+    <input name="password" type="password" id="login-password" />
 
     <input type="submit">
   </form>
 
   <form id="logout-form" style="display:none;">
+    <h2>Log out</h2>
     <input type="submit" value="logout" />
   </form>
 
@@ -36,6 +49,7 @@
 
     if (!hasAuthToken()) {
       document.getElementById("signup-form").style.display = "block";
+      document.getElementById("login-form").style.display = "block";
     } else {
       document.getElementById("logout-form").style.display = "block";
     }
@@ -44,9 +58,8 @@
       .addEventListener("submit", (e) => {
         e.preventDefault();
 
-        const email = document.getElementById("form-email").value;
-        const password = document.getElementById("form-password").value;
-        console.log(email, password);
+        const email = document.getElementById("signup-email").value;
+        const password = document.getElementById("signup-password").value;
 
         fetch("http://localhost:3000/users/", {
           method: "post",
@@ -70,6 +83,36 @@
           })
           .catch(e => console.log(e));
       })
+
+      document.getElementById("login-form")
+        .addEventListener("submit", (e) => {
+          e.preventDefault();
+
+          const email = document.getElementById("login-email").value;
+          const password = document.getElementById("login-password").value;
+
+          fetch("http://localhost:3000/users/login/", {
+            method: "post",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              email,
+              password
+            })
+          })
+            .then(resp => {
+              if (resp.headers.get("x-auth"))
+                localStorage.setItem(authTokenName, resp.headers.get("x-auth"));
+
+              return resp.json();
+            })
+            .then(json => {
+              console.log(json);
+            })
+            .catch(e => console.log(e));
+        })
 
     document.getElementById("logout-form")
       .addEventListener("submit", (e) => {
