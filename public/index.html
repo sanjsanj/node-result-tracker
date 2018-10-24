@@ -21,6 +21,10 @@
     <input type="submit">
   </form>
 
+  <form id="logout-form" style="display:none;">
+    <input type="submit" value="logout" />
+  </form>
+
   <script>
     const authTokenName = "NodeResultTracker:x-auth";
 
@@ -32,6 +36,8 @@
 
     if (!hasAuthToken()) {
       document.getElementById("signup-form").style.display = "block";
+    } else {
+      document.getElementById("logout-form").style.display = "block";
     }
 
     document.getElementById("signup-form")
@@ -61,6 +67,24 @@
           })
           .then(json => {
             console.log(json);
+          })
+          .catch(e => console.log(e));
+      })
+
+    document.getElementById("logout-form")
+      .addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        fetch("http://localhost:3000/users/me/token/", {
+          method: "delete",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "x-auth": localStorage.getItem(authTokenName)
+          }
+        })
+          .then(resp => {
+            localStorage.removeItem(authTokenName);
           })
           .catch(e => console.log(e));
       })

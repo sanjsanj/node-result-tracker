@@ -35,30 +35,6 @@ app.post("/users", async (req, res) => {
   }
 });
 
-// fetch("http://localhost:3000/users/", {
-//   method: "post",
-//   headers: {
-//     Accept: "application/json",
-//     "Content-Type": "application/json"
-//   },
-//   body: JSON.stringify({
-//     email: "teest22224@test.com",
-//     password: "password1"
-//   })
-// })
-//   .then(resp => {
-//     localStorage.setItem(
-//       "NodeResultTracker:x-auth",
-//       resp.headers.get("x-auth")
-//     );
-//     return resp.json();
-//   })
-//   .then(json => {
-//     console.log(localStorage.getItem("NodeResultTracker:x-auth"));
-//     console.log(json);
-//   })
-//   .catch(e => console.log(e));
-
 app.get("/users/me", authenticate, (req, res) => {
   res.send(req.user);
 });
