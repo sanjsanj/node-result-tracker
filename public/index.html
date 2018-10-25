@@ -11,6 +11,8 @@
 <body>
   <h1>Result Tracker</h1>
 
+  <section id="welcome-message" style="display:none;"></section>
+
   <form id="signup-form" style="display:none;">
     <h2>Sign up</h2>
     <label name="email">email</label>
@@ -39,29 +41,48 @@
   </form>
 
   <script>
-    const authTokenName = "NodeResultTracker:x-auth";
+    const localStorageAuthTokenKey = "NodeResultTracker:x-auth";
+    const localStorageUserEmailKey = "NodeResultTracker:user-email";
+
+    const welcomeMessageElement = document.getElementById("welcome-message");
+
+    const signupFormElement     = document.getElementById("signup-form");
+    const signupEmailElement    = document.getElementById("signup-email");
+    const signupPasswordElement = document.getElementById("signup-password");
+    
+    const loginFormElement      = document.getElementById("login-form");
+    const loginEmailElement     = document.getElementById("login-email");
+    const loginPasswordElement  = document.getElementById("login-password");
+    
+    const logoutFormElement     = document.getElementById("logout-form");
 
     function hasAuthToken() {
-      return localStorage.getItem(authTokenName)
+      return localStorage.getItem(localStorageAuthTokenKey)
         ? true
         : false;
     }
 
-    if (!hasAuthToken()) {
-      document.getElementById("signup-form").style.display = "block";
-      document.getElementById("login-form").style.display = "block";
+    if (hasAuthToken()) {
+      logoutFormElement.style.display = "block";
+      
+      if (localStorage.getItem(localStorageUserEmailKey)) {
+        welcomeMessageElement.innerHTML = `Welcome ${localStorage.getItem(localStorageUserEmailKey)}`;
+        welcomeMessageElement.style.display = "block";
+      }
     } else {
-      document.getElementById("logout-form").style.display = "block";
+      signupFormElement.style.display = "block";
+      loginFormElement.style.display  = "block";
     }
+    
 
-    document.getElementById("signup-form")
+    signupFormElement
       .addEventListener("submit", (e) => {
         e.preventDefault();
 
-        const email = document.getElementById("signup-email").value;
-        const password = document.getElementById("signup-password").value;
+        const email    = signupEmailElement.value;
+        const password = signupPasswordElement.value;
 
-        fetch("http://localhost:3000/users/", {
+        fetch("/users/", {
           method: "post",
           headers: {
             Accept: "application/json",
@@ -73,25 +94,26 @@
           })
         })
           .then(resp => {
-            if (resp.headers.get("x-auth"))
-              localStorage.setItem(authTokenName, resp.headers.get("x-auth"));
+            if (resp.headers.get("x-auth")) {
+              localStorage.setItem(localStorageAuthTokenKey, resp.headers.get("x-auth"));
+            }
 
             return resp.json();
           })
-          .then(json => {
-            console.log(json);
+          .then(user => {
+            localStorage.setItem(localStorageUserEmailKey, email);
           })
-          .catch(e => console.log(e));
+          .catch(console.log);
       })
 
-      document.getElementById("login-form")
+      loginFormElement
         .addEventListener("submit", (e) => {
           e.preventDefault();
 
-          const email = document.getElementById("login-email").value;
-          const password = document.getElementById("login-password").value;
+          const email    = loginEmailElement.value;
+          const password = loginPasswordElement.value;
 
-          fetch("http://localhost:3000/users/login/", {
+          fetch("/users/login/", {
             method: "post",
             headers: {
               Accept: "application/json",
@@ -103,33 +125,36 @@
             })
           })
             .then(resp => {
-              if (resp.headers.get("x-auth"))
-                localStorage.setItem(authTokenName, resp.headers.get("x-auth"));
+              const authToken = resp.headers.get("x-auth");
+
+              if (authToken)
+                localStorage.setItem(localStorageAuthTokenKey, authToken);
 
               return resp.json();
             })
-            .then(json => {
-              console.log(json);
+            .then(user => {
+              localStorage.setItem(localStorageUserEmailKey, email);
             })
-            .catch(e => console.log(e));
+            .catch(console.log);
         })
 
-    document.getElementById("logout-form")
+    logoutFormElement
       .addEventListener("submit", (e) => {
         e.preventDefault();
 
-        fetch("http://localhost:3000/users/me/token/", {
+        fetch("/users/me/token/", {
           method: "delete",
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            "x-auth": localStorage.getItem(authTokenName)
+            "x-auth": localStorage.getItem(localStorageAuthTokenKey)
           }
         })
           .then(resp => {
-            localStorage.removeItem(authTokenName);
+            localStorage.removeItem(localStorageAuthTokenKey);
+            localStorage.removeItem(localStorageUserEmailKey);
           })
-          .catch(e => console.log(e));
+          .catch(console.log);
       })
   </script>
 </body>
