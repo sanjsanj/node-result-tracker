@@ -39,6 +39,15 @@ app.get("/users/me", authenticate, (req, res) => {
   res.send(req.user);
 });
 
+app.get("/users", authenticate, async (req, res) => {
+  try {
+    const users = await User.find();
+    res.send(users);
+  } catch (e) {
+    res.status(401).send(e);
+  }
+});
+
 app.post("/users/login", async (req, res) => {
   try {
     const body = _.pick(req.body, ["email", "password"]);
@@ -87,10 +96,9 @@ app.delete("/result/:id", authenticate, async (req, res) => {
     if (result._creator.toString() !== req.user._id.toString())
       return res.status(404).send();
 
-    const removedResult = await Result.findOneAndRemove({ _id: id});
-    if (!removedResult)
-      return res.status(404).send();
-    
+    const removedResult = await Result.findOneAndRemove({ _id: id });
+    if (!removedResult) return res.status(404).send();
+
     res.status(200).send({ removedResult });
   } catch (e) {
     res.status(404).send();

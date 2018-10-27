@@ -15,16 +15,26 @@ const loginPasswordElement = document.getElementById("login-password");
 const logoutFormElement = document.getElementById("logout-form");
 
 const resultSubmitFormElement = document.getElementById("result-submit-form");
+const winnerSelectElement = document.getElementById("winner");
+const loserSelectElement = document.getElementById("loser");
+
+let users;
 
 function hasAuthToken() {
   return localStorage.getItem(localStorageAuthTokenKey) ? true : false;
+}
+
+function hasStoredEmail() {
+  return localStorage.getItem(localStorageUserEmailKey) ? true : false;
 }
 
 if (hasAuthToken()) {
   logoutFormElement.style.display = "block";
   resultSubmitFormElement.style.display = "block";
 
-  if (localStorage.getItem(localStorageUserEmailKey)) {
+  getUsers();
+
+  if (hasStoredEmail()) {
     welcomeMessageElement.innerHTML = `Welcome ${localStorage.getItem(
       localStorageUserEmailKey
     )}`;
@@ -33,6 +43,34 @@ if (hasAuthToken()) {
 } else {
   signupFormElement.style.display = "block";
   loginFormElement.style.display = "block";
+}
+
+function getUsers() {
+  fetch("/users/", {
+    method: "get",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application.json",
+      "x-auth": localStorage.getItem(localStorageAuthTokenKey)
+    }
+  })
+    .then(resp => resp.json())
+    .then(json => {
+      users = json;
+      setResultOptions();
+    })
+    .catch(console.log);
+}
+
+function setResultOptions() {
+  users.forEach(user => {
+    const option = document.createElement("option");
+    option.value = user.email;
+    option.innerText = user.email;
+    
+    loserSelectElement.appendChild(option);
+    winnerSelectElement.appendChild(option.cloneNode(true));
+  });
 }
 
 signupFormElement.addEventListener("submit", e => {
