@@ -25,7 +25,7 @@ app.get("/", (req, res) => {
 
 app.post("/users", async (req, res) => {
   try {
-    const body = _.pick(req.body, ["email", "password"]);
+    const body = _.pick(req.body, ["email", "password", "inviteCode"]);
     const user = new User(body);
     await user.save();
     const token = await user.generateAuthToken(user);
@@ -62,7 +62,8 @@ app.delete("/users/me/token", authenticate, async (req, res) => {
 app.post("/result", authenticate, (req, res) => {
   const result = new Result({
     _creator: req.user._id,
-    winner: req.body.winner
+    winner: req.body.winner,
+    loser: req.body.loser
   });
 
   result

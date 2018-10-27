@@ -13,6 +13,10 @@ const Result = mongoose.model("Result", {
     type: String,
     required: true
   },
+  loser: {
+    type: String,
+    required: true
+  },
   confirmed: {
     type: Boolean,
     default: false

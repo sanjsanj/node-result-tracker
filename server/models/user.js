@@ -21,6 +21,10 @@ const UserSchema = new mongoose.Schema({
     required: true,
     minlength: 6
   },
+  inviteCode: {
+    type: String,
+    required: true
+  },
   tokens: [
     {
       access: {
@@ -102,8 +106,11 @@ UserSchema.statics.findByCredentials = function(email, password) {
 UserSchema.pre("save", function(next) {
   const user = this;
 
+  if (user.inviteCode !== process.env.INVITE_CODE)
+    return Promise.reject("Wrong invite code");
+
   if (user.isModified("password")) {
-    bcrypt.genSalt(2, (err, salt) => {
+    bcrypt.genSalt(10, (err, salt) => {
       bcrypt.hash(user.password, salt, (err, hash) => {
         user.password = hash;
         next();

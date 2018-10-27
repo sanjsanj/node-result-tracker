@@ -5,11 +5,14 @@ function authenticate(req, res, next) {
 
   User.findByToken(token)
     .then(user => {
-      if (!user) return Promise.reject();
-
-      req.user = user;
-      req.token = token;
-      next();
+      if (user) {
+        req.user = user;
+        req.token = token;
+        
+        next();
+      } else {
+        return Promise.reject();
+      }
     })
     .catch(e => res.status(401).send(e));
 }
