@@ -77,6 +77,25 @@ app.get("/results", authenticate, (req, res) => {
     .catch(e => res.status(400).send(e));
 });
 
+app.delete("/result/:id", authenticate, async (req, res) => {
+  const id = req.params.id;
+
+  if (!ObjectID.isValid(id)) return res.status(404).send();
+  try {
+    const result = await Result.findById(id);
+    if (result._creator.toString() !== req.user._id.toString())
+      return res.status(404).send();
+
+    const removedResult = await Result.findOneAndRemove({ _id: id});
+    if (!removedResult)
+      return res.status(404).send();
+    
+    res.status(200).send({ removedResult });
+  } catch (e) {
+    res.status(404).send();
+  }
+});
+
 app.patch("/result/confirm/:id", authenticate, (req, res) => {
   const id = req.params.id;
 
