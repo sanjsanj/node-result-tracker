@@ -99,7 +99,6 @@ function getResults() {
 }
 
 function buildResults(results) {
-  console.log(results);
   results
     .filter(result => !result.confirmed)
     .sort((a, b) => b.submittedAt - a.submittedAt)
@@ -129,7 +128,17 @@ function buildResults(results) {
 function buildTotal(results) {
   const confirmedResults = results.filter(result => result.confirmed);
   const winners = _.uniq(confirmedResults.map(result => result.winner));
-  console.log(winners);
+  const resultsObject = winners.reduce((acc, val) => {
+    acc[val] = confirmedResults.filter(result => result.winner === val).length;
+    console.log(val)
+    return acc;
+  }, {});
+
+  winners.forEach(winner => {
+    const text = document.createElement("p");
+    text.innerText = `${winner}: ${resultsObject[winner]} wins`;
+    totalWrapper.appendChild(text);
+  })
 }
 
 signupFormElement.addEventListener("submit", e => {
