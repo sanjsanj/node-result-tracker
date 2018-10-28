@@ -6,12 +6,14 @@ const signupPasswordElement = document.getElementById("signup-password");
 const signupInviteCodeElement = document.getElementById("signup-invite-code");
 
 signupFormElement.addEventListener("submit", e => {
+  e.preventDefault();
+  
   const email = signupEmailElement.value;
   const password = signupPasswordElement.value;
   const inviteCode = signupInviteCodeElement.value;
 
   fetch("/users/", {
-    method: "post",
+    method: "POST",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json"
@@ -30,6 +32,7 @@ signupFormElement.addEventListener("submit", e => {
     })
     .then(user => {
       localStorage.setItem(localStorageUserEmailKey, email);
+      window.location.reload();
     })
     .catch(console.log);
 });

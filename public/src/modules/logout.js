@@ -4,7 +4,7 @@ const logoutFormElement = document.getElementById("logout-form");
 
 logoutFormElement.addEventListener("submit", e => {
   fetch("/users/me/token/", {
-    method: "delete",
+    method: "DELETE",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",

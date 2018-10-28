@@ -46,7 +46,7 @@ function _buildResults(results) {
 
       const deleteBtn = document.createElement("button");
       deleteBtn.type = "submit";
-      deleteBtn.innerText = "Delete";
+      deleteBtn.innerText = "DELETE";
       deleteBtn.className = "delete-result";
       deleteBtn.setAttribute("data-id", result._id);
       deleteBtn.setAttribute("data-type", "delete");
@@ -59,7 +59,7 @@ function _buildResults(results) {
 
 function getResults() {
   fetch("/results/", {
-    method: "get",
+    method: "GET",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",

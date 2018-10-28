@@ -9,7 +9,7 @@ resultSubmitFormElement.addEventListener("submit", e => {
   const loser = document.getElementById("loser").value;
 
   fetch("/result", {
-    method: "post",
+    method: "POST",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -24,7 +24,7 @@ resultSubmitFormElement.addEventListener("submit", e => {
 
 function _getUsers() {
   return fetch("/users/", {
-    method: "get",
+    method: "GET",
     headers: {
       Accept: "application/json",
       "Content-Type": "application.json",

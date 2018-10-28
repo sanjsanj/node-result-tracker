@@ -5,11 +5,13 @@ const loginEmailElement = document.getElementById("login-email");
 const loginPasswordElement = document.getElementById("login-password");
 
 loginFormElement.addEventListener("submit", e => {
+  e.preventDefault();
+
   const email = loginEmailElement.value;
   const password = loginPasswordElement.value;
 
   fetch("/users/login/", {
-    method: "post",
+    method: "POST",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json"
@@ -25,6 +27,7 @@ loginFormElement.addEventListener("submit", e => {
     })
     .then(user => {
       localStorage.setItem(localStorageUserEmailKey, email);
+      window.location.reload();
     })
     .catch(console.log);
 });
