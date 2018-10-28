@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 const localStorageAuthTokenKey = "NodeResultTracker:x-auth";
 const localStorageUserEmailKey = "NodeResultTracker:user-email";
 
@@ -19,6 +21,8 @@ const winnerSelectElement = document.getElementById("winner");
 const loserSelectElement = document.getElementById("loser");
 
 const resultsWrapper = document.getElementById("results__wrapper");
+
+const totalWrapper = document.getElementById("total__wrapper");
 
 let users;
 
@@ -70,7 +74,7 @@ function setResultOptions() {
     const option = document.createElement("option");
     option.value = user.email;
     option.innerText = user.email;
-    
+
     loserSelectElement.appendChild(option);
     winnerSelectElement.appendChild(option.cloneNode(true));
   });
@@ -87,7 +91,9 @@ function getResults() {
   })
     .then(resp => resp.json())
     .then(json => {
-      buildResults(json.results)
+      const results = json.results;
+      buildResults(results);
+      buildTotal(results);
     })
     .catch(console.log);
 }
@@ -99,11 +105,31 @@ function buildResults(results) {
     .sort((a, b) => b.submittedAt - a.submittedAt)
     .forEach(result => {
       const resultContainer = document.createElement("div");
-      resultContainer.id = result._id;
-      resultContainer.innerText = `Winner: ${result.winner}, Loser: ${result.loser}`;
+      resultContainer.innerText =
+        `Winner: ${result.winner}, Loser: ${result.loser}`;
 
+      const confirmInput = document.createElement("input");
+      confirmInput.type = "submit";
+      confirmInput.value = "Confirm";
+      confirmInput.className = "confirm-result";
+      confirmInput.setAttribute("data-id", result._id);
+
+      const deleteInput = document.createElement("input");
+      deleteInput.type = "submit";
+      deleteInput.value = "Delete";
+      deleteInput.className = "delete-result";
+      deleteInput.setAttribute("data-id", result._id);
+
+      resultContainer.appendChild(confirmInput);
+      resultContainer.appendChild(deleteInput);
       resultsWrapper.appendChild(resultContainer);
-    })
+    });
+}
+
+function buildTotal(results) {
+  const confirmedResults = results.filter(result => result.confirmed);
+  const winners = _.uniq(confirmedResults.map(result => result.winner));
+  console.log(winners);
 }
 
 signupFormElement.addEventListener("submit", e => {
