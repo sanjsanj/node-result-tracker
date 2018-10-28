@@ -15,7 +15,6 @@ const welcomeMessageElement = document.getElementById("welcome-message");
 const signupFormElement = document.getElementById("signup-form");
 const loginFormElement = document.getElementById("login-form");
 const logoutFormElement = document.getElementById("logout-form");
-
 const resultSubmitFormElement = document.getElementById("result-submit-form");
 
 if (hasAuthToken()) {

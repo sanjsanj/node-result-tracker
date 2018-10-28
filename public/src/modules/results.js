@@ -3,10 +3,28 @@ import { buildTotal } from "./total";
 
 const resultsWrapper = document.getElementById("results__wrapper");
 
-resultsWrapper.addEventListener("click", function(e) {
+resultsWrapper.addEventListener("click", async e => {
   e.preventDefault();
-  const target = e.target;
-  console.log(target);
+  const id = e.target.getAttribute("data-id");
+  const type = e.target.getAttribute("data-type");
+  const config =
+    type === "confirm"
+      ? { method: "PATCH", path: "/result/confirm" }
+      : { method: "DELETE", path: "/result" };
+
+  const fetchOptions = {
+    method: config.method,
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "x-auth": localStorage.getItem(localStorageAuthTokenKey)
+    }
+  };
+
+  if (window.confirm(`Are you sure you want to ${type.toUpperCase()} this result?`)) {
+    await fetch(`${config.path}/${id}`, fetchOptions);
+    window.location.reload();
+  }
 });
 
 function _buildResults(results) {
@@ -31,7 +49,7 @@ function _buildResults(results) {
       deleteBtn.innerText = "Delete";
       deleteBtn.className = "delete-result";
       deleteBtn.setAttribute("data-id", result._id);
-      deleteBtn.setAttribute("data-type", "confirm");
+      deleteBtn.setAttribute("data-type", "delete");
 
       resultContainer.appendChild(confirmBtn);
       resultContainer.appendChild(deleteBtn);

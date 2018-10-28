@@ -91,6 +91,7 @@ app.delete("/result/:id", authenticate, async (req, res) => {
   const id = req.params.id;
 
   if (!ObjectID.isValid(id)) return res.status(404).send();
+
   try {
     const result = await Result.findById(id);
     if (result._creator.toString() !== req.user._id.toString())
@@ -107,7 +108,7 @@ app.delete("/result/:id", authenticate, async (req, res) => {
 
 app.patch("/result/confirm/:id", authenticate, (req, res) => {
   const id = req.params.id;
-
+  
   if (!ObjectID.isValid(id)) {
     return res.status(404).send();
   }
@@ -124,6 +125,7 @@ app.patch("/result/confirm/:id", authenticate, (req, res) => {
       }
 
       result.confirmed = !result.confirmed;
+      
       result
         .save()
         .then(() => res.send(result))

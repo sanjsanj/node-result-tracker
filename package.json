@@ -4,7 +4,7 @@
   "description": "A result tracker",
   "private": true,
   "scripts": {
-    "dev": "npm run webpack && nodemon server/server.js",
+    "dev": "webpack --mode=development && nodemon server/server.js",
     "start": "node server/server.js",
     "webpack": "webpack",
     "webpack:dev": "webpack --watch --mode=development",
