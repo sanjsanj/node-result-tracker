@@ -104,23 +104,26 @@ function buildResults(results) {
     .sort((a, b) => b.submittedAt - a.submittedAt)
     .forEach(result => {
       const resultContainer = document.createElement("div");
-      resultContainer.innerText =
-        `Winner: ${result.winner}, Loser: ${result.loser}`;
+      resultContainer.innerText = `Winner: ${result.winner}, Loser: ${
+        result.loser
+      }`;
 
-      const confirmInput = document.createElement("input");
-      confirmInput.type = "submit";
-      confirmInput.value = "Confirm";
-      confirmInput.className = "confirm-result";
-      confirmInput.setAttribute("data-id", result._id);
+      const confirmBtn = document.createElement("button");
+      confirmBtn.type = "submit";
+      confirmBtn.innerText = "Confirm";
+      confirmBtn.className = "confirm-result";
+      confirmBtn.setAttribute("data-id", result._id);
+      confirmBtn.setAttribute("data-type", "confirm");
 
-      const deleteInput = document.createElement("input");
-      deleteInput.type = "submit";
-      deleteInput.value = "Delete";
-      deleteInput.className = "delete-result";
-      deleteInput.setAttribute("data-id", result._id);
+      const deleteBtn = document.createElement("button");
+      deleteBtn.type = "submit";
+      deleteBtn.innerText = "Delete";
+      deleteBtn.className = "delete-result";
+      deleteBtn.setAttribute("data-id", result._id);
+      deleteBtn.setAttribute("data-type", "confirm");
 
-      resultContainer.appendChild(confirmInput);
-      resultContainer.appendChild(deleteInput);
+      resultContainer.appendChild(confirmBtn);
+      resultContainer.appendChild(deleteBtn);
       resultsWrapper.appendChild(resultContainer);
     });
 }
@@ -130,7 +133,6 @@ function buildTotal(results) {
   const winners = _.uniq(confirmedResults.map(result => result.winner));
   const resultsObject = winners.reduce((acc, val) => {
     acc[val] = confirmedResults.filter(result => result.winner === val).length;
-    console.log(val)
     return acc;
   }, {});
 
@@ -138,7 +140,7 @@ function buildTotal(results) {
     const text = document.createElement("p");
     text.innerText = `${winner}: ${resultsObject[winner]} wins`;
     totalWrapper.appendChild(text);
-  })
+  });
 }
 
 signupFormElement.addEventListener("submit", e => {
@@ -228,3 +230,11 @@ resultSubmitFormElement.addEventListener("submit", e => {
     .then(console.log)
     .catch(console.log);
 });
+
+resultsWrapper.addEventListener("click", function(e) {
+  e.preventDefault();
+  const target = e.target;
+  const attr = target.getAttribute("data-id");
+
+  console.log(target);
+})
