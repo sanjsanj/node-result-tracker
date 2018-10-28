@@ -18,6 +18,8 @@ const resultSubmitFormElement = document.getElementById("result-submit-form");
 const winnerSelectElement = document.getElementById("winner");
 const loserSelectElement = document.getElementById("loser");
 
+const resultsWrapper = document.getElementById("results__wrapper");
+
 let users;
 
 function hasAuthToken() {
@@ -33,6 +35,7 @@ if (hasAuthToken()) {
   resultSubmitFormElement.style.display = "block";
 
   getUsers();
+  getResults();
 
   if (hasStoredEmail()) {
     welcomeMessageElement.innerHTML = `Welcome ${localStorage.getItem(
@@ -71,6 +74,36 @@ function setResultOptions() {
     loserSelectElement.appendChild(option);
     winnerSelectElement.appendChild(option.cloneNode(true));
   });
+}
+
+function getResults() {
+  fetch("/results/", {
+    method: "get",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "x-auth": localStorage.getItem(localStorageAuthTokenKey)
+    }
+  })
+    .then(resp => resp.json())
+    .then(json => {
+      buildResults(json.results)
+    })
+    .catch(console.log);
+}
+
+function buildResults(results) {
+  console.log(results);
+  results
+    .filter(result => !result.confirmed)
+    .sort((a, b) => b.submittedAt - a.submittedAt)
+    .forEach(result => {
+      const resultContainer = document.createElement("div");
+      resultContainer.id = result._id;
+      resultContainer.innerText = `Winner: ${result.winner}, Loser: ${result.loser}`;
+
+      resultsWrapper.appendChild(resultContainer);
+    })
 }
 
 signupFormElement.addEventListener("submit", e => {
