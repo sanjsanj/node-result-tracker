@@ -7,7 +7,7 @@
     "dev": "npm run webpack && nodemon server/server.js",
     "start": "node server/server.js",
     "webpack": "webpack",
-    "webpack:watch": "webpack --watch",
+    "webpack:dev": "webpack --watch --mode=development",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
